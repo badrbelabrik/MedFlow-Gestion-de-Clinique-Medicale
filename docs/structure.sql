@@ -13,9 +13,16 @@ CREATE TABLE users(
     email VARCHAR(100) NOT NULL,
     password VARCHAR(100) NOT NULL,
     phone VARCHAR(100) NOT NULL,
-    role ENUM('patient','doctor','admin'),
-    id_speciality INT,
-    FOREIGN KEY (id_speciality) REFERENCES specialities(id) ON DELETE CASCADE
+    role ENUM('patient','doctor','admin')
+);
+
+CREATE TABLE doctors(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_user INT NOT NULL,
+    id_speciality INT NOT NULL,
+    is_active BOOL DEFAULT true,
+    FOREIGN KEY (id_user) REFERENCES users(id),
+    FOREIGN KEY (id_speciality) REFERENCES specialities(id)
 );
 
 CREATE TABLE timeslots(

@@ -8,15 +8,13 @@ class User
     private string $email;
     private string $phone;
     private string $role;
-    private ?Speciality $speciality;
 
-    public function __construct(string $firstname,string $lastname,string $email,string $phone,string $role,?Speciality $speciality = null,?int $id = null){
+    public function __construct(string $firstname,string $lastname,string $email,string $phone,string $role,?int $id = null){
         $this->firstname = $firstname;
         $this->lastname = $lastname;
         $this->email = $email;
         $this->phone = $phone;
         $this->role = $role;
-        $this->speciality = $speciality;
         $this->id = $id;
     }
 
