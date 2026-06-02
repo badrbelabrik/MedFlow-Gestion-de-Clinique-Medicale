@@ -14,7 +14,7 @@ class Database
         if(self::$pdo === null){
 
             // read .env
-            $env = parse_ini_file(".env");
+            $env = parse_ini_file("../.env");
 
             $host = $env['DB_HOST'];
             $dbname = $env['DB_NAME'];
