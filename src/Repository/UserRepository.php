@@ -11,11 +11,12 @@ class UserRepository {
     private PDO $db;
 
 
-    
+
     public function __construct() {
         $this->db = Database::getConnection();
     }
 
+    
     public function create(User $user) {
         $stmt = $this->db->prepare(
             "INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)"

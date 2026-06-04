@@ -7,6 +7,7 @@ class Role {
 
     public static function all(): array {
         return [
+            
             self::ADMIN,
             self::DOCTOR,
             self::PATIENT
