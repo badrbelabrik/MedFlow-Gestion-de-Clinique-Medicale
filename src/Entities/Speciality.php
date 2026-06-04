@@ -6,6 +6,8 @@ class Speciality
     private string $name;
     private string $description;
 
+
+    
     public function __construct(string $name,string $description,?int $id = null){
         $this->name = $name;
         $this->description = $description;
