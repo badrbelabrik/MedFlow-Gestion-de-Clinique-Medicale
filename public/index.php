@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <div class="absolute inset-0 bg-black bg-opacity-40"></div>
 
-<!-- card -->
+
 <div class="relative bg-white p-8 rounded-2xl shadow-lg text-center">
 
     <h1 class="text-3xl font-bold text-blue-600 mb-4">
