@@ -12,6 +12,7 @@ class AuthController {
             session_start();
         }
 
+        
         $this->repo = new UserRepository();
     }
 
