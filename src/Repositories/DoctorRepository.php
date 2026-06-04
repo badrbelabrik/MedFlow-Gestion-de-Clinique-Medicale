@@ -3,11 +3,11 @@
 namespace Repositories;
 
 use Config\Database;
-use Doctor;
 use PDO;
+use Entities\Doctor;
 use PDOException;
-use Speciality;
-use User;
+use Entities\Speciality;
+use Entities\User;
 
 class DoctorRepository
 {
@@ -57,6 +57,54 @@ class DoctorRepository
         }catch(PDOException $e){
             echo "Error :".$e->getMessage();
             return null;
+        }
+    }
+
+    public function getAllDoctors(): array {
+        try {
+            $sql = "SELECT d.id AS doctor_id, d.is_active,
+                       u.id AS user_id, u.firstname, u.lastname, u.email, u.phone, u.role,
+                       sp.id AS speciality_id, sp.name AS speciality_name, sp.description AS speciality_desc
+                FROM doctors d
+                JOIN users u ON d.id_user = u.id
+                JOIN specialities sp ON d.id_speciality = sp.id";
+
+            $stmt = $this->pdo->query($sql);
+
+            $doctors = [];
+
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+
+                $user = new User(
+                    $row['firstname'],
+                    $row['lastname'],
+                    $row['email'],
+                    $row['phone'],
+                    $row['role'],
+                    $row['user_id']
+                );
+
+
+                $speciality = new Speciality(
+                    $row['speciality_name'],
+                    $row['speciality_desc'],
+                    $row['speciality_id']
+                );
+
+
+                $doctors[] = new Doctor(
+                    $user,
+                    $speciality,
+                    (bool)$row['is_active'],
+                    $row['doctor_id']
+                );
+            }
+
+            return $doctors;
+
+        } catch (PDOException $e) {
+            error_log("Error in getAllDoctors: " . $e->getMessage());
+            return [];
         }
     }
 }

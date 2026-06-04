@@ -1,14 +1,35 @@
 <?php
+spl_autoload_register(function ($class) {
+    $classPath = str_replace('\\', DIRECTORY_SEPARATOR, $class);
+    $paths = [
+            __DIR__ . '/../../src/' . $classPath . '.php',
+            __DIR__ . '/../../config/' . basename($classPath) . '.php'
+    ];
+    foreach ($paths as $file) {
+        if (file_exists($file)) {
+            require_once $file;
+            return;
+        }
+    }
+});
+
+use Controller\PatientController;
+use Helpers\DateHelper;
+
+// 1. Si les données ne sont pas chargées, on appelle le contrôleur
+if (!isset($allSpecialities)) {
+    $controller = new PatientController();
+
+    // On récupère le tableau retourné par le contrôleur
+    $data = $controller->dashboard();
+
+    // ✨ Extraction des variables dynamiques ($allSpecialities, $doctors, $myAppointments, $timeslots)
+    extract($data);
+}
+
+// 2. Lancement de la mise en page
 $pageTitle = "Espace Patient — MedFlow";
 include_once __DIR__ . '/../layout/header.php';
-
-use App\Helpers\DateHelper;
-
-// Note : Ces variables ($doctors et $myAppointments) doivent être préparées
-// dans ton contrôleur et transmises à cette vue.
-// Si elles ne sont pas définies, on initialise des tableaux vides pour éviter les crashs.
-$doctors = $doctors ?? [];
-$myAppointments = $myAppointments ?? [];
 ?>
 
     <main class="flex-grow max-w-4xl w-full mx-auto px-4 sm:px-6 py-10 space-y-12">
@@ -20,7 +41,7 @@ $myAppointments = $myAppointments ?? [];
                 <p class="text-xs text-slate-400 mt-1">Filtrez par spécialité ou par nom pour afficher les disponibilités en temps réel.</p>
             </div>
 
-            <form action="/patient/dashboard" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+            <form action="patient-page.php" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
                 <div>
                     <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Prénom :</label>
                     <div class="relative">
@@ -40,9 +61,9 @@ $myAppointments = $myAppointments ?? [];
                     <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Spécialité médicale</label>
                     <select name="speciality_id" class="w-full border border-slate-200 bg-white rounded-xl p-2.5 text-sm text-slate-800 focus:ring-2 focus:ring-emerald-500 transition">
                         <option value="">Toutes les spécialités</option>
-                        <option value="1" <?= ($_GET['speciality_id'] ?? '') == '1' ? 'selected' : '' ?>>Médecine Générale</option>
-                        <option value="2" <?= ($_GET['speciality_id'] ?? '') == '2' ? 'selected' : '' ?>>Cardiologie</option>
-                        <option value="3" <?= ($_GET['speciality_id'] ?? '') == '3' ? 'selected' : '' ?>>Pédiatrie</option>
+                        <?php foreach($allSpecialities as $speciality) : ?>
+                            <option value="<?= $speciality['id'] ?>" <?= isset($_GET['speciality_id']) && $_GET['speciality_id'] == $speciality['id'] ? 'selected' : '' ?>><?= htmlspecialchars($speciality['name']) ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
@@ -53,81 +74,65 @@ $myAppointments = $myAppointments ?? [];
                 </div>
             </form>
 
-            <?php if (isset($_GET['firstname']) || isset($_GET['lastname']) || isset($_GET['speciality_id'])): ?>
-                <div class="space-y-6">
-                    <?php if (empty($doctors)): ?>
-                        <div class="text-center py-8 border border-dashed border-slate-200 rounded-2xl bg-slate-50/50">
-                            <span class="text-2xl">🔍</span>
-                            <p class="text-sm font-medium text-slate-500 mt-2">Aucun médecin ne correspond à vos critères de recherche.</p>
-                        </div>
-                    <?php else: ?>
-                        <?php foreach ($doctors as $doctor):
-                            // On suppose que ton modèle Doctor a ces méthodes via sa composition
-                            $docUser = $doctor->getUser();
-                            $docSpec = $doctor->getSpeciality();
+            <div class="space-y-6">
+                <?php if (empty($timeSlots)): ?>
+                    <div class="text-center py-8 border border-dashed border-slate-200 rounded-2xl bg-slate-50/50">
+                        <span class="text-2xl">🔍</span>
+                        <p class="text-sm font-medium text-slate-500 mt-2">Aucun créneau horaire disponible ne correspond à vos critères.</p>
+                    </div>
+                <?php else: ?>
 
-                            // Récupération des créneaux via le contrôleur (injectés dans l'objet ou via un tableau groupé)
-                            // Exemple ici : on imagine que le contrôleur a rattaché les créneaux libres au médecin
-                            $timeslots = $doctor->getAvailableTimeslots() ?? [];
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <?php foreach ($timeSlots as $slot):
+                            // Formatage des dates via ton Helper
+                            $start = DateHelper::formatTimeslotDate($slot['start_time']);
+                            $end = new DateTime($slot['end_time']);
+
+                            // Récupération des données associées
+                            $docFirstname = $slot['firstname'] ?? 'Inconnu';
+                            $docLastname = $slot['lastname'] ?? 'Médecin';
                             ?>
-                            <div class="border border-slate-200/60 rounded-2xl p-5 bg-white space-y-4 shadow-sm hover:border-slate-300/80 transition">
-                                <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-4 gap-2">
+
+                            <div class="border border-slate-200/60 rounded-2xl p-5 bg-white space-y-4 shadow-sm hover:border-slate-300/80 transition flex flex-col justify-between">
+
+                                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                                     <div class="flex items-center space-x-3">
                                         <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-sm">
                                             Dr
                                         </div>
                                         <div>
                                             <h4 class="text-sm font-bold text-slate-900">
-                                                Dr. <?= htmlspecialchars($docUser->getFirstname() . ' ' . $docUser->getLastname()) ?>
+                                                Dr. <?= htmlspecialchars($docFirstname . ' ' . $docLastname) ?>
                                             </h4>
                                             <p class="text-xs text-slate-400">
-                                                <?= htmlspecialchars($docSpec->getName()) ?> — Cabinet Professionnel
+                                                Disponibilité immédiate
                                             </p>
                                         </div>
                                     </div>
-                                    <span class="text-[11px] font-medium text-slate-400 bg-slate-100 px-2.5 py-1 rounded-md">
-                                    Disponibilités en temps réel
-                                </span>
                                 </div>
 
-                                <div>
-                                    <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3">Sélectionnez un créneau horaire libre :</label>
+                                <form action="/patient/appointment/book" method="POST" class="space-y-4">
+                                    <input type="hidden" name="id_doctor" value="<?= $slot['id_doctor'] ?? '' ?>">
+                                    <input type="hidden" name="id_timeslot" value="<?= $slot['id'] ?>">
 
-                                    <form action="/patient/appointment/book" method="POST">
-                                        <input type="hidden" name="id_doctor" value="<?= $doctor->getId() ?>">
+                                    <div class="relative border border-emerald-500/30 bg-emerald-50/10 rounded-xl p-4 flex flex-col items-center justify-center">
+                                        <span class="block text-xs font-bold text-emerald-900"><?= $start['date_texte'] ?></span>
+                                        <span class="block text-[11px] font-medium text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded mt-1.5">
+                                            <?= $start['heure'] ?> - <?= $end->format('H:i') ?>
+                                        </span>
+                                    </div>
 
-                                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                                            <?php if (empty($timeslots)): ?>
-                                                <p class="text-xs text-slate-400 italic col-span-3 py-2">Aucun créneau disponible pour le moment.</p>
-                                            <?php else: ?>
-                                                <?php foreach ($timeslots as $slot):
-                                                    $start = DateHelper::formatTimeslotDate($slot['start_time']);
-                                                    $end = new DateTime($slot['end_time']);
-                                                    ?>
-                                                    <label class="relative border border-slate-200 rounded-xl p-3 flex flex-col items-center justify-center cursor-pointer hover:bg-emerald-50/30 hover:border-emerald-500 transition group has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-50/20">
-                                                        <input type="radio" name="id_timeslot" value="<?= $slot['id'] ?>" required class="absolute top-2 right-2 h-4 w-4 text-emerald-600 focus:ring-emerald-500 accent-emerald-600">
-                                                        <span class="block text-xs font-bold text-slate-700 group-hover:text-emerald-900"><?= $start['date_texte'] ?></span>
-                                                        <span class="block text-[11px] font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded mt-1.5 group-hover:bg-emerald-100 group-hover:text-emerald-800"><?= $start['heure'] ?> - <?= $end->format('H:i') ?></span>
-                                                    </label>
-                                                <?php endforeach; ?>
-                                            <?php endif; ?>
-                                        </div>
+                                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-xl transition shadow-sm flex items-center justify-center space-x-2">
+                                        <span>✨</span>
+                                        <span>Réserver ce créneau</span>
+                                    </button>
+                                </form>
 
-                                        <?php if (!empty($timeslots)): ?>
-                                            <div class="mt-4 pt-2 flex justify-end">
-                                                <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition shadow-sm flex items-center space-x-2">
-                                                    <span>✨</span>
-                                                    <span>Demander ce rendez-vous</span>
-                                                </button>
-                                            </div>
-                                        <?php endif; ?>
-                                    </form>
-                                </div>
                             </div>
                         <?php endforeach; ?>
-                    <?php endif; ?>
-                </div>
-            <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
         </section>
 
         <section class="space-y-4">

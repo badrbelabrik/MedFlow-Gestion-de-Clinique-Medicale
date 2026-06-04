@@ -1,5 +1,5 @@
 <?php
-
+namespace Entities;
 class Prescription
 {
     private ?int $id;

@@ -2,14 +2,14 @@
 
 namespace Repositories;
 
-use Appointment;
+use Entities\Appointment;
 use Config\Database;
-use Doctor;
+use Entities\Doctor;
 use PDO;
 use PDOException;
-use Speciality;
-use Timeslot;
-use User;
+use Entities\Speciality;
+use Entities\Timeslot;
+use Entities\User;
 
 class AppointmentRepository
 {

@@ -14,12 +14,12 @@ class Database
         if(self::$pdo === null){
 
             // read .env
-            $env = parse_ini_file(".env");
+            $config = parse_ini_file(__DIR__ . '/../.env');
 
-            $host = $env['DB_HOST'];
-            $dbname = $env['DB_NAME'];
-            $user = $env['DB_USER'];
-            $password = $env['DB_PASSWORD'];
+            $host = $config['DB_HOST'];
+            $dbname = $config['DB_NAME'];
+            $user = $config['DB_USER'];
+            $password = $config['DB_PASSWORD'];
 
             try{
 

@@ -1,5 +1,5 @@
 <?php
-
+namespace Entities;
 class Appointment
 {
     private ?int $id;

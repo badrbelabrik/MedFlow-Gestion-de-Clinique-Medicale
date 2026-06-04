@@ -6,6 +6,9 @@ use DateTime;
 
 class DateHelper
 {
+    /**
+     * @throws \DateMalformedStringException
+     */
     public static function formatTimeslotDate(string $timestamp): array
     {
         $date = new DateTime($timestamp);
