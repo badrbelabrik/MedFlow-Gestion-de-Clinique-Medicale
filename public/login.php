@@ -8,13 +8,12 @@
 <body class="h-screen flex items-center justify-center bg-cover bg-center relative"
       style="background-image: url('medical-treatment-calendar-with-stethoscope-pills (1).jpg');">
 
-<!-- dark overlay -->
+
 <div class="absolute inset-0 bg-slate-900/60"></div>
 
-<!-- login card -->
 <div class="relative w-96 bg-white/95 backdrop-blur-md p-8 rounded-2xl shadow-2xl">
 
-    <!-- icon -->
+  
     <div class="flex justify-center mb-4">
         <div class="bg-blue-100 text-blue-600 p-3 rounded-full">
             🏥
@@ -30,7 +29,7 @@
         Hospital Management Login
     </p>
 
-    <!-- form -->
+  
     <form method="POST" action="index.php" class="space-y-4">
 
         <input type="email" name="email" placeholder="Doctor / Patient Email"
@@ -45,7 +44,7 @@
 
     </form>
 
-    <!-- footer -->
+  
     <p class="text-xs text-center text-gray-400 mt-4">
         Secure access for medical staff & patients
     </p>
