@@ -1,8 +1,16 @@
 <?php
 
-namespace Middleware;
+class Role {
+    public const ADMIN = "admin";
+    public const DOCTOR = "doctor";
+    public const PATIENT = "patient";
 
-class Roles
-{
-
+    public static function all(): array {
+        return [
+            
+            self::ADMIN,
+            self::DOCTOR,
+            self::PATIENT
+        ];
+    }
 }

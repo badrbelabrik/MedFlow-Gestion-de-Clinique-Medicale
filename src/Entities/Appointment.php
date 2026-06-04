@@ -8,6 +8,7 @@ class Appointment
     private string $status;
     private int $id_timeslot;
 
+
     public function __construct(int $id_patient,int $id_doctor,string $status,int $id_timeslot,?int $id = null){
         $this->id_patient = $id_patient;
         $this->id_doctor = $id_doctor;
@@ -15,6 +16,7 @@ class Appointment
         $this->id_timeslot = $id_timeslot;
         $this->id = $id;
     }
+
 
     public function getId(): ?int
     {
@@ -26,6 +28,7 @@ class Appointment
         $this->id = $id;
     }
 
+    
     public function getIdPatient(): int
     {
         return $this->id_patient;
