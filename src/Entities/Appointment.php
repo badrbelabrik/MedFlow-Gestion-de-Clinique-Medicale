@@ -17,7 +17,7 @@ class Appointment
         $this->id = $id;
     }
 
-    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -28,6 +28,7 @@ class Appointment
         $this->id = $id;
     }
 
+    
     public function getIdPatient(): int
     {
         return $this->id_patient;
