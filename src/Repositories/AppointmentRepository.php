@@ -96,4 +96,19 @@ class AppointmentRepository
             return [];
         }
     }
+
+public function bookAppointment($patientId, $doctorId, $timeslotId):bool{
+        try{
+            $sql = "INSERT INTO appointments(id_patient,id_doctor,id_timeslot) VALUES(?,?,?)";
+            $stmt = $this->pdo->prepare($sql);
+            return $stmt->execute([
+                $patientId,
+                $doctorId,
+                $timeslotId
+            ]);
+        }catch(PDOException $e){
+            echo "Error :".$e->getMessage();
+            return 0;
+        }
+}
 }

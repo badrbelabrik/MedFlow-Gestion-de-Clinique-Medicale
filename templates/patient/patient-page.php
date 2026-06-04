@@ -14,20 +14,19 @@ spl_autoload_register(function ($class) {
 });
 
 use Controller\PatientController;
+use Controller\AppointmentController;
 use Helpers\DateHelper;
 
-// 1. Si les données ne sont pas chargées, on appelle le contrôleur
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reserve'])) {
+    $appointmentController = new AppointmentController();
+    $appointmentController->book();
+}
 if (!isset($allSpecialities)) {
-    $controller = new PatientController();
-
-    // On récupère le tableau retourné par le contrôleur
-    $data = $controller->dashboard();
-
-    // ✨ Extraction des variables dynamiques ($allSpecialities, $doctors, $myAppointments, $timeslots)
+    $patientController = new PatientController();
+    $data = $patientController->dashboard();
     extract($data);
 }
 
-// 2. Lancement de la mise en page
 $pageTitle = "Espace Patient — MedFlow";
 include_once __DIR__ . '/../layout/header.php';
 ?>
@@ -84,11 +83,10 @@ include_once __DIR__ . '/../layout/header.php';
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <?php foreach ($timeSlots as $slot):
-                            // Formatage des dates via ton Helper
+
                             $start = DateHelper::formatTimeslotDate($slot['start_time']);
                             $end = new DateTime($slot['end_time']);
 
-                            // Récupération des données associées
                             $docFirstname = $slot['firstname'] ?? 'Inconnu';
                             $docLastname = $slot['lastname'] ?? 'Médecin';
                             ?>
@@ -105,13 +103,13 @@ include_once __DIR__ . '/../layout/header.php';
                                                 Dr. <?= htmlspecialchars($docFirstname . ' ' . $docLastname) ?>
                                             </h4>
                                             <p class="text-xs text-slate-400">
-                                                Disponibilité immédiate
+                                                <?=  $slot['speciality_name'] ?>
                                             </p>
                                         </div>
                                     </div>
                                 </div>
 
-                                <form action="/patient/appointment/book" method="POST" class="space-y-4">
+                                <form action="patient-page.php" method="POST" class="space-y-4">
                                     <input type="hidden" name="id_doctor" value="<?= $slot['id_doctor'] ?? '' ?>">
                                     <input type="hidden" name="id_timeslot" value="<?= $slot['id'] ?>">
 
@@ -122,7 +120,7 @@ include_once __DIR__ . '/../layout/header.php';
                                         </span>
                                     </div>
 
-                                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-xl transition shadow-sm flex items-center justify-center space-x-2">
+                                    <button name="reserve" type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-xl transition shadow-sm flex items-center justify-center space-x-2">
                                         <span>✨</span>
                                         <span>Réserver ce créneau</span>
                                     </button>

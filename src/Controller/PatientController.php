@@ -47,13 +47,24 @@ class PatientController
             });
         }
         $timeSlots = [];
-        if($firstname == '' && $lastname == '' && $specialityId == ''){
-            $timeSlots = $this->timeslotRepo->get
+
+        if ($firstname == '' && $lastname == '' && $specialityId == '') {
+            $timeSlots = $this->timeslotRepo->getAllAvailableTimeslots();
         }
-        else if($firstname !== '' && $lastname !== ''){
-            $doctorId = $this->doctorRepo->getDoctorByName($firstname,$lastname)->getId();
-            $timeSlots = $this->timeslotRepo->getAvailableTimeslotsByDoctor($doctorId);
-        } else if($firstname == '' && $lastname == '' && $specialityId !== ''){
+        else if ($firstname !== '' || $lastname !== '') {
+            // 1. On récupère l'objet (ou null)
+            $doctor = $this->doctorRepo->getDoctorByName($firstname, $lastname);
+
+            // 2. On vérifie s'il existe avant de lui demander son ID
+            if ($doctor) {
+                $timeSlots = $this->timeslotRepo->getAvailableTimeslotsByDoctor($doctor->getId());
+            } else {
+                // Le médecin n'existe pas, $timeSlots reste un tableau vide []
+                // Ta vue affichera automatiquement le message "Aucun créneau disponible"
+                $timeSlots = [];
+            }
+        }
+        else if ($firstname == '' && $lastname == '' && $specialityId !== '') {
             $timeSlots = $this->timeslotRepo->getTimeSlotsBySpeciality($specialityId);
         }
         return [
