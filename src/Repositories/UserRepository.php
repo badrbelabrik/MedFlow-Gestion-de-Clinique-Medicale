@@ -3,6 +3,10 @@
 require_once __DIR__ . "/../../config/database.php";
 require_once __DIR__ . "/../Entities/User.php";
 
+use config\Database;
+
+
+
 
 class UserRepository {
 
