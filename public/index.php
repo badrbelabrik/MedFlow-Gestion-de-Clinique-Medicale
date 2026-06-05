@@ -1,63 +1,78 @@
 <?php
-require_once __DIR__ . "/../src/Controller/AuthController.php";
+declare(strict_types=1);
 
-$auth = new AuthController();
+spl_autoload_register(function ($class) {
+    $classPath = str_replace('\\', '/', $class);
 
-$result = "";
+    if (str_starts_with($class, 'config\\') || str_starts_with($class, 'config/')) {
+        $file = __DIR__ . '/../' . $classPath . '.php';
+    } else {
+        $file = __DIR__ . '/../src/' . $classPath . '.php';
+    }
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $result = $auth->login($_POST["email"], $_POST["password"]);
+    if (file_exists($file)) {
+        require_once $file;
+    }
+});
+
+use Controller\AuthController;
+
+$authController = new AuthController();
+$result = null; // ✨ Initialisation à null pour éviter les notices PHP
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $result = $authController->login(); // ✨ On stocke l'erreur retournée dans $result !
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'logout') {
+    $authController->logout();
+}
+
+// Interception classique du formulaire de Login
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_GET['action'])) {
+    $result = $authController->login();
 }
 ?>
-
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-    <title>MedFlow</title>
+    <meta charset="UTF-8">
+    <title>MedFlow Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="h-screen flex items-center justify-center bg-cover bg-center relative"
-      style="background-image: url('medical-treatment-calendar-with-stethoscope-pills (1).jpg');">
+<body class="h-screen flex m-0 p-0">
 
-<!-- overlay -->
-<div class="absolute inset-0 bg-gradient-to-br from-blue-900/60 via-black/50 to-green-900/40"></div>
-
-<!-- card -->
-<div class="relative w-[90%] max-w-md">
-
-    <div class="backdrop-blur-xl bg-white/10 border border-white/20 shadow-2xl rounded-3xl p-10 text-center text-white">
-
-        <!-- logo / title -->
-        <div class="mb-6">
-            <div class="w-16 h-16 mx-auto bg-white/20 rounded-full flex items-center justify-center mb-3">
-                🏥
-            </div>
-
-            <h1 class="text-2xl font-bold text-green-600 mb-4">
-    You are logged out
-</h1>
-            <p class="text-sm text-white/70 mt-2">
-                Hospital Management System
-            </p>
-        </div>
-
-        <!-- result -->
-        <div class="bg-white/10 border border-white/20 rounded-xl p-4 mb-6">
-            <p class="text-lg text-white">
-                <?= $result ?>
-            </p>
-        </div>
-
-        <!-- button -->
-        <a href="login.php"
-           class="inline-block w-full bg-green-600 hover:bg-green-600 transition-all duration-300 text-white font-semibold py-3 rounded-xl shadow-lg hover:scale-105">
-
-            Back to Login
-        </a>
-
+<div class="hidden md:flex w-1/2 bg-gradient-to-br from-green-700 via-green-600 to-emerald-500 text-white items-center justify-center p-10">
+    <div class="text-center max-w-md">
+        <div class="text-6xl mb-6">🏥</div>
+        <h1 class="text-5xl font-bold mb-4">MedFlow</h1>
+        <p class="text-white/80 text-lg">Hospital Management System</p>
     </div>
+</div>
 
+<div class="w-full md:w-1/2 flex items-center justify-center bg-gray-50">
+    <div class="w-full max-w-md bg-white shadow-2xl rounded-3xl p-10 border-t-4 border-green-500">
+        <h1 class="text-3xl font-bold text-center text-green-600 mb-6">Welcome Back</h1>
+
+        <?php if (!empty($result)): ?>
+            <div class="bg-red-100 text-red-600 p-3 rounded-xl mb-4 text-center text-sm font-semibold">
+                <?= htmlspecialchars($result) ?>
+            </div>
+        <?php endif; ?>
+
+        <form method="POST" class="space-y-4">
+            <input type="email" name="email" placeholder="Email" required
+                   class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-green-500 outline-none">
+
+            <input type="password" name="password" placeholder="Password" required
+                   class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-green-500 outline-none">
+
+            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white p-3 rounded-xl font-semibold transition">
+                Sign In
+            </button>
+        </form>
+    </div>
 </div>
 
 </body>

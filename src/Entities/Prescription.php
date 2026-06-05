@@ -1,12 +1,11 @@
 <?php
-
+namespace Entities;
 class Prescription
 {
     private ?int $id;
     private string $description;
     private int $id_appointment;
 
-    
     public function __construct(string $description,int $id_appointment,?int $id){
         $this->description = $description;
         $this->id_appointment = $id_appointment;

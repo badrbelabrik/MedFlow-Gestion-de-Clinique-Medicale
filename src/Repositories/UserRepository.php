@@ -1,42 +1,69 @@
 <?php
+
 namespace Repositories;
-require_once __DIR__ . "/../../config/database.php";
-require_once __DIR__ . "/../Entities/User.php";
 
 use config\Database;
-use PDO;
+use Entities\Doctor;
 use Entities\User;
-
-class UserRepository {
-
-
-
-    private PDO $db;
+use PDO;
+use PDOException;
 
 
+class UserRepository
+{
+    private PDO $pdo;
 
-    public function __construct() {
-        $this->db = Database::getConnection();
+    public function __construct(){
+        $this->pdo = Database::getConnection();
     }
 
-    
-    public function create(User $user) {
-        $stmt = $this->db->prepare(
-            "INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)"
-        );
-
-        $stmt->execute([
-            $user->getName(),
-            $user->getEmail(),
-            password_hash($user->getPassword(), PASSWORD_DEFAULT),
-            $user->getRole()
-        ]);
+    public function getUserById(int $userId):?User{
+        try{
+            $sql = "SELECT * FROM users WHERE id = ?";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$userId]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return new User(
+                    $result['firstname'],
+                    $result['lastname'],
+                    $result['email'],
+                    $result['phone'],
+                    $result['role'],
+                    $result['id']
+                );
+        }catch(PDOException $e){
+            echo "Error :".$e->getMessage();
+            return null;
+        }
     }
 
-    public function findByEmail($email) {
-        $stmt = $this->db->prepare("SELECT * FROM users WHERE email = ?");
-        $stmt->execute([$email]);
+    public function verifyLogin($email,$password):?User
+    {
+        try{
+            $sql = "SELECT * FROM users WHERE email = ?";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$email]);
+            $userData = $stmt->fetch();
 
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+            if(!$userData){
+                return null;
+            }
+
+            if(password_verify($password,$userData['password'])){
+                return new User(
+                    $userData['firstname'],
+                    $userData['lastname'],
+                    $userData['email'],
+                    $userData['password'],
+                    $userData['phone'],
+                    $userData['role'],
+                    $userData['id']
+                );
+            }
+            return null;
+        }catch(PDOException $e){
+            echo "Error: ".$e->getMessage();
+            return null;
+        }
     }
 }

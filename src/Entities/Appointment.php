@@ -1,22 +1,20 @@
 <?php
-
+namespace Entities;
 class Appointment
 {
     private ?int $id;
-    private int $id_patient;
-    private int $id_doctor;
+    private User $patient;
+    private Doctor $doctor;
     private string $status;
-    private int $id_timeslot;
+    private Timeslot $timeslot;
 
-
-    public function __construct(int $id_patient,int $id_doctor,string $status,int $id_timeslot,?int $id = null){
-        $this->id_patient = $id_patient;
-        $this->id_doctor = $id_doctor;
+    public function __construct(User $patient, Doctor $doctor, string $status, Timeslot $timeslot, ?int $id = null) {
+        $this->patient = $patient;
+        $this->doctor = $doctor;
         $this->status = $status;
-        $this->id_timeslot = $id_timeslot;
+        $this->timeslot = $timeslot;
         $this->id = $id;
     }
-
 
     public function getId(): ?int
     {
@@ -28,25 +26,24 @@ class Appointment
         $this->id = $id;
     }
 
-    
-    public function getIdPatient(): int
+    public function getPatient(): User
     {
-        return $this->id_patient;
+        return $this->patient;
     }
 
-    public function setIdPatient(int $id_patient): void
+    public function setPatient(User $patient): void
     {
-        $this->id_patient = $id_patient;
+        $this->patient = $patient;
     }
 
-    public function getIdDoctor(): int
+    public function getDoctor(): Doctor
     {
-        return $this->id_doctor;
+        return $this->doctor;
     }
 
-    public function setIdDoctor(int $id_doctor): void
+    public function setDoctor(Doctor $doctor): void
     {
-        $this->id_doctor = $id_doctor;
+        $this->doctor = $doctor;
     }
 
     public function getStatus(): string
@@ -59,14 +56,15 @@ class Appointment
         $this->status = $status;
     }
 
-    public function getIdTimeslot(): int
+    public function getTimeslot(): Timeslot
     {
-        return $this->id_timeslot;
+        return $this->timeslot;
     }
 
-    public function setIdTimeslot(int $id_timeslot): void
+    public function setTimeslot(Timeslot $timeslot): void
     {
-        $this->id_timeslot = $id_timeslot;
+        $this->timeslot = $timeslot;
     }
+
 
 }

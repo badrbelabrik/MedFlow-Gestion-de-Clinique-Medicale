@@ -1,5 +1,5 @@
 <?php
-
+namespace Entities;
 class Timeslot
 {
     private ?int $id;
@@ -8,7 +8,6 @@ class Timeslot
     private bool $is_available;
     private int $id_doctor;
 
-    
     public function __construct(string $start_time,string $end_time,bool $is_available,int $id_doctor,?int $id = null){
         $this->start_time = $start_time;
         $this->end_time = $end_time;

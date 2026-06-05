@@ -1,13 +1,11 @@
 <?php
-
+namespace Entities;
 class Speciality
 {
     private ?int $id;
     private string $name;
     private string $description;
 
-
-    
     public function __construct(string $name,string $description,?int $id = null){
         $this->name = $name;
         $this->description = $description;
