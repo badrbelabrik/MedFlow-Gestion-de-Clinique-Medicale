@@ -184,12 +184,12 @@ include_once __DIR__ . '/../layout/header.php';
                             </div>
 
                             <div class="self-end sm:self-center">
-                                <?php if ($app->getStatus() === 'pending'): ?>
+                                <?php if ($app->getStatus() === 'pending' || $app->getStatus() === 'confirmed'): ?>
                                     <a href="patient-page.php?action=cancel&id=<?= $app->getId() ?>" class="text-slate-400 hover:text-rose-600 text-xs font-bold px-4 py-2 rounded-xl hover:bg-rose-50 transition border border-transparent hover:border-rose-100">
                                         Annuler la demande
                                     </a>
                                 <?php elseif ($app->getStatus() === 'terminate'): ?>
-                                    <button onclick="openPrescriptionModal('Dr. <?= htmlspecialchars($doctorUser->getLastname()) ?>', 'Détail de l\'ordonnance archivée.')" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-sm flex items-center space-x-2">
+                                    <button onclick="loadAndOpenPrescription(<?= $app->getId() ?>, 'Dr. <?= htmlspecialchars($doctorUser->getLastname()) ?>')" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-sm flex items-center space-x-2">
                                         <span>📄</span>
                                         <span>Voir l'ordonnance</span>
                                     </button>
@@ -222,10 +222,28 @@ include_once __DIR__ . '/../layout/header.php';
     </div>
 
     <script>
-        function openPrescriptionModal(doctorName, treatmentText) {
-            document.getElementById('modalDoctorName').innerText = doctorName;
-            document.getElementById('prescriptionContent').innerText = treatmentText;
-            document.getElementById('prescriptionModal').classList.remove('hidden');
+        function loadAndOpenPrescription(appointmentId, doctorName) {
+            const modal = document.getElementById('prescriptionModal');
+            const doctorNameElem = document.getElementById('modalDoctorName');
+            const contentElem = document.getElementById('prescriptionContent');
+
+            doctorNameElem.innerText = doctorName;
+            contentElem.innerText = "Récupération sécurisée de votre ordonnance...";
+            modal.classList.remove('hidden');
+
+            fetch(`get-prescription.php?appointment_id=${appointmentId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        contentElem.textContent = data.description;
+                    } else {
+                        contentElem.innerText = data.message;
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching prescription:", error);
+                    contentElem.innerText = "Impossible de charger le document pour le moment.";
+                });
         }
 
         function closePrescriptionModal() {
