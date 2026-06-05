@@ -21,6 +21,8 @@ class Database
             }
 
             $env = parse_ini_file($envPath);
+            // read .env
+            $env = parse_ini_file(".env");
 
             $host = $env['DB_HOST'];
             $dbname = $env['DB_NAME'];
@@ -28,6 +30,7 @@ class Database
             $password = $env['DB_PASSWORD'];
 
             try{
+
                 self::$pdo = new PDO(
                     "mysql:host=$host;dbname=$dbname",
                     $user,
@@ -41,6 +44,9 @@ class Database
                 
 
             }catch(PDOException $e){
+
+            }catch(PDOException $e){
+
                 die("Connection failed : " . $e->getMessage());
             }
         }

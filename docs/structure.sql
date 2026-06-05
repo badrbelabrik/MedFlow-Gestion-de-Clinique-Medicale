@@ -23,6 +23,9 @@ CREATE TABLE doctors(
     is_active BOOL DEFAULT true,
     FOREIGN KEY (id_user) REFERENCES users(id),
     FOREIGN KEY (id_speciality) REFERENCES specialities(id)
+    role ENUM('patient','doctor','admin'),
+    id_speciality INT,
+    FOREIGN KEY (id_speciality) REFERENCES specialities(id) ON DELETE CASCADE
 );
 
 CREATE TABLE timeslots(
@@ -103,3 +106,4 @@ INSERT INTO appointments (id_patient, id_doctor, status, id_timeslot) VALUES
 INSERT INTO prescriptions (description, id_appointment) VALUES
 ('Amoxicilline 1g - 2 fois par jour pendant 7 jours. Doliprane 1g si douleur.', 4);
 ALTER TABLE timeslots ADD status VARCHAR(50) DEFAULT 'disponible';
+)
