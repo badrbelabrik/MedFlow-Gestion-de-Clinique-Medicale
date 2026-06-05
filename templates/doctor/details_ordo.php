@@ -3,7 +3,6 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Role match m3a doctor
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'doctor') {
     header('Location: ../auth/login.php');
     exit();
@@ -18,7 +17,6 @@ $ordonnance = null;
 if ($id_rdv > 0) {
     $pdo = Database::getConnection();
     
-    // Rj3na tables b l-Anglais: prescriptions, appointments, users, timeslots
     $sql = "SELECT o.description, o.id AS id_ordonnance,
                    CONCAT(u_pat.lastname, ' ', u_pat.firstname) AS nom_patient,
                    t.start_time AS date_consultation
@@ -40,67 +38,95 @@ if ($id_rdv > 0) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MedFlow | Détails de l'ordonnance</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #0b0f19; background-image: radial-gradient(circle at 50% 0%, #1e2640 0%, #0b0f19 70%); }
-        .glass-card { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .prescription-paper { background: rgba(255, 255, 255, 0.03); border: 1px dashed rgba(16, 185, 129, 0.2); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        @media print {
+            body { background: white !important; color: black !important; }
+            .no-print { display: none !important; }
+            .print-card { border: none !important; box-shadow: none !important; padding: 0 !important; max-w: 100% !important; }
+            .prescription-box { border: 1px solid #000 !important; background: transparent !important; }
+        }
     </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        clinicBlack: '#0f172a',
+                        clinicGreen: '#10b981',
+                        clinicBg: '#f8fafc',
+                    },
+                    boxShadow: { 'premium': '0 20px 40px -15px rgba(15, 23, 42, 0.05)' }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="text-slate-200 font-sans min-h-screen flex items-center justify-center p-4">
+<body class="bg-clinicBg text-slate-600 min-h-screen antialiased flex flex-col">
 
-    <div class="w-full max-w-2xl glass-card rounded-3xl p-8 shadow-2xl relative">
-        
-        <div class="flex items-center justify-between mb-8 border-b border-slate-800/60 pb-5">
-            <div>
-                <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Consultation Clôturée</span>
-                <h1 class="text-2xl font-black text-white mt-1">Détails de l'Ordonnance </h1>
+    <!-- HEADER (no-print) -->
+    <header class="w-full bg-white border-b border-slate-100 h-20 sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-xl bg-clinicBlack flex items-center justify-center text-white font-extrabold text-lg">M</div>
+                <span class="text-xl font-bold text-clinicBlack">Med<span class="text-clinicGreen">Flow</span></span>
             </div>
-            <div class="text-right">
-                <p class="text-xs text-slate-500 font-mono">ID RDV: #RDV-<?= $id_rdv ?></p>
-                <?php if ($ordonnance): ?>
-                    <p class="text-xs text-slate-500 font-mono mt-1">N° Ord: #ORD-<?= $ordonnance['id_ordonnance'] ?></p>
-                <?php endif; ?>
-            </div>
+            <nav class="hidden md:flex items-center gap-1">
+                <a href="dashboard.php" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-slate-400 hover:text-clinicBlack text-sm font-semibold transition">Dashboard</a>
+                <a href="RendezVous.php" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-slate-400 hover:text-clinicBlack text-sm font-semibold transition">Rendez-vous</a>
+            </nav>
+            <div class="text-xs font-bold text-clinicBlack">Dr. <?= htmlspecialchars($_SESSION['nom'] ?? 'Médecin') ?></div>
         </div>
+    </header>
 
-        <?php if (!$ordonnance): ?>
-            <div class="text-center py-12">
-                <h3 class="text-lg font-bold text-white">Aucune ordonnance trouvée</h3>
-                <p class="text-xs text-slate-400 mt-1">Il se peut que ce rendez-vous n'ait pas encore d'ordonnance rédigée.</p>
-                <a href="RendezVous.php" class="mt-6 inline-block px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs rounded-xl transition">
-                    Retour à l'historique
-                </a>
-            </div>
-        <?php else: ?>
-            <div class="space-y-6">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-900/40 p-4 rounded-xl border border-slate-800/60">
-                    <div>
-                        <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-500">Patient</span>
-                        <span class="text-sm font-bold text-white"><?= htmlspecialchars($ordonnance['nom_patient']) ?></span>
-                    </div>
-                    <div>
-                        <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-500">Date de consultation</span>
-                        <span class="text-sm font-mono text-slate-300"><?= htmlspecialchars($ordonnance['date_consultation']) ?></span>
-                    </div>
-                </div>
-
+    <!-- CONTAINER -->
+    <div class="flex-1 flex items-center justify-center p-4 sm:p-8">
+        <div class="w-full max-w-2xl bg-white border border-slate-100 rounded-3xl p-6 md:p-10 shadow-premium print-card">
+            
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 border-b border-slate-50 pb-6">
                 <div>
-                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Médicaments & Posologie</label>
-                    <div class="prescription-paper rounded-2xl p-6 text-slate-100 font-mono text-sm leading-relaxed whitespace-pre-wrap min-h-[200px]">
-                        <?= htmlspecialchars($ordonnance['description']) ?>
-                    </div>
+                    <h1 class="text-2xl font-extrabold text-clinicBlack tracking-tight">Ordonnance Médicale</h1>
                 </div>
-
-                <div class="flex items-center justify-between pt-4 border-t border-slate-800/60">
-                    <button onclick="window.print()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs rounded-xl border border-slate-700 transition flex items-center gap-2">
-                         Imprimer l'ordonnance
-                    </button>
-                    <a href="RendezVous.php" class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs rounded-xl transition uppercase tracking-wider">
-                        Retour à l'historique
-                    </a>
+                <div class="text-left sm:text-right font-mono text-xs text-slate-400">
+                    <p class="font-semibold text-slate-700">REF: #RDV-<?= $id_rdv ?></p>
+                    <?php if ($ordonnance): ?>
+                        <p>N° ORD: #ORD-<?= $ordonnance['id_ordonnance'] ?></p>
+                    <?php endif; ?>
                 </div>
             </div>
-        <?php endif; ?>
+
+            <?php if (!$ordonnance): ?>
+                <div class="text-center py-16 no-print">
+                    <h3 class="text-base font-bold text-clinicBlack">Aucune ordonnance trouvée</h3>
+                    <a href="RendezVous.php" class="mt-6 inline-block text-xs bg-slate-100 text-slate-600 font-bold px-4 py-2 rounded-xl">Retour</a>
+                </div>
+            <?php else: ?>
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                        <div>
+                            <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Patient</span>
+                            <span class="text-base font-bold text-clinicBlack"><?= htmlspecialchars($ordonnance['nom_patient']) ?></span>
+                        </div>
+                        <div>
+                            <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Consultation du</span>
+                            <span class="text-sm font-mono font-bold text-slate-700"><?= htmlspecialchars($ordonnance['date_consultation']) ?></span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="prescription-box bg-slate-50/30 border-2 border-dashed border-slate-200 rounded-2xl p-6 text-slate-800 font-mono text-sm leading-relaxed whitespace-pre-wrap min-h-[220px]">
+                            <?= htmlspecialchars($ordonnance['description']) ?>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-slate-50 no-print">
+                        <button onclick="window.print()" class="w-full sm:w-auto px-5 py-3 bg-clinicBlack hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-2">Imprimer</button>
+                        <a href="RendezVous.php" class="w-full sm:w-auto text-center px-6 py-3 bg-clinicGreen hover:bg-clinicGreenHover text-white font-extrabold text-xs rounded-xl transition uppercase tracking-wider">Retour</a>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
     </div>
 </body>
 </html>

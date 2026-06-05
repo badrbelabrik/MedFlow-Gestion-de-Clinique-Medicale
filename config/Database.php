@@ -38,7 +38,7 @@ class Database
                     PDO::ATTR_ERRMODE,
                     PDO::ERRMODE_EXCEPTION
                 );
-                echo "Connected successfully to the database.";
+                
 
             }catch(PDOException $e){
                 die("Connection failed : " . $e->getMessage());
