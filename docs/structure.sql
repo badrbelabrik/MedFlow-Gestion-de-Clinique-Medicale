@@ -1,3 +1,4 @@
+-- Active: 1777028296278@@127.0.0.1@3306@medflow
 CREATE DATABASE medflow;
 USE medflow;
 
@@ -61,3 +62,34 @@ CREATE TABLE prescriptions(
 
     FOREIGN KEY (id_appointment) REFERENCES appointments(id) ON DELETE CASCADE
 );
+
+
+INSERT INTO specialities (name, description) VALUES
+('Cardiologie', 'Heart specialist'),
+('Dermatologie', 'Skin specialist'),
+('Pédiatrie', 'Children specialist');
+
+-- USERS
+INSERT INTO users (firstname, lastname, email, password, phone, role) VALUES
+('Admin', 'System', 'admin@med.com', '123456', '0600000000', 'admin'),
+('John', 'Doe', 'doctor1@med.com', '123456', '0611111111', 'doctor'),
+('Sara', 'Ali', 'patient1@med.com', '123456', '0622222222', 'patient');
+
+-- DOCTORS
+INSERT INTO doctors (id_user, id_speciality, is_active) VALUES
+(2, 1, TRUE);
+
+-- TIMESLOTS
+INSERT INTO timeslots (start_time, end_time, is_available, id_doctor) VALUES
+('2026-06-10 09:00:00', '2026-06-10 09:30:00', TRUE, 2),
+('2026-06-10 10:00:00', '2026-06-10 10:30:00', TRUE, 2);
+
+-- APPOINTMENTS
+INSERT INTO appointments (id_patient, id_doctor, id_timeslot, status) VALUES
+(3, 2, 1, 'pending');
+
+-- PRESCRIPTIONS
+INSERT INTO prescriptions (description, id_appointment) VALUES
+('Take rest and drink water', 1);
+
+

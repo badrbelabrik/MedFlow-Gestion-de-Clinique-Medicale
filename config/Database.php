@@ -1,45 +1,20 @@
 <?php
+// config/database.php
 
-namespace Config;
+function getDB(): PDO {
+    static $pdo = null;
+    if ($pdo === null) {
+        $host   = $_ENV['DB_HOST']   ?? 'localhost';
+        $dbname = $_ENV['DB_NAME']   ?? 'medflow';
+        $user   = $_ENV['DB_USER']   ?? 'root';
+        $pass   = $_ENV['DB_PASS']   ?? '';
 
-use PDO;
-use PDOException;
-
-class Database
-{
-    private static ?PDO $pdo = null;
-
-    public static function getConnection()
-    {
-        if(self::$pdo === null){
-
-            // read .env
-            $env = parse_ini_file(".env");
-
-            $host = $env['DB_HOST'];
-            $dbname = $env['DB_NAME'];
-            $user = $env['DB_USER'];
-            $password = $env['DB_PASSWORD'];
-
-            try{
-
-                self::$pdo = new PDO(
-                    "mysql:host=$host;dbname=$dbname",
-                    $user,
-                    $password
-                );
-
-                self::$pdo->setAttribute(
-                    PDO::ATTR_ERRMODE,
-                    PDO::ERRMODE_EXCEPTION
-                );
-
-            }catch(PDOException $e){
-
-                die("Connection failed : " . $e->getMessage());
-            }
-        }
-
-        return self::$pdo;
+        $pdo = new PDO(
+            "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
+            $user, $pass,
+            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]
+        );
     }
+    return $pdo;
 }
