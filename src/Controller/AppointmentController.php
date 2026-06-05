@@ -24,7 +24,7 @@ class AppointmentController
         $doctorId = isset($_POST['id_doctor']) ? (int)$_POST['id_doctor'] : 0;
         $timeslotId = isset($_POST['id_timeslot']) ? (int)$_POST['id_timeslot'] : 0;
 
-        $patientId = 5;
+        $patientId = 5;  // NEED TO CHANGE !!!!!!!!!!!!!!!!!!!!
 
         if ($doctorId > 0 && $timeslotId > 0) {
             $success = $this->appointmentRepo->bookAppointment($patientId, $doctorId, $timeslotId);
@@ -39,6 +39,22 @@ class AppointmentController
             }
         } else {
             header("Location: patient-page.php?error=invalid_data");
+            exit();
+        }
+    }
+
+    public function cancel(): void {
+        $appointmentId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        $patientId = 5;  // NEED TO CHANGE !!!!!!!!!!!!!!!!!!!!
+
+        if ($appointmentId > 0) {
+            $success = $this->appointmentRepo->cancelAppointment($appointmentId, $patientId);
+
+            if ($success) {
+                header("Location: patient-page.php?success=cancelled");
+            } else {
+                header("Location: patient-page.php?error=cancel_failed");
+            }
             exit();
         }
     }

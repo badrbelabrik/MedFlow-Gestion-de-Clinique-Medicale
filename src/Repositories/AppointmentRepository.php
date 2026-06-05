@@ -110,5 +110,39 @@ public function bookAppointment($patientId, $doctorId, $timeslotId):bool{
             echo "Error :".$e->getMessage();
             return 0;
         }
-}
+    }
+
+    public function cancelAppointment(int $appointmentId, int $patientId): bool {
+        try {
+            $this->pdo->beginTransaction();
+
+            $sqlGetSlot = "SELECT id_timeslot FROM appointments WHERE id = ? AND id_patient = ? AND status != 'terminate'";
+            $stmtGet = $this->pdo->prepare($sqlGetSlot);
+            $stmtGet->execute([$appointmentId, $patientId]);
+            $app = $stmtGet->fetch(PDO::FETCH_ASSOC);
+
+            if (!$app) {
+                $this->pdo->rollBack();
+                return false;
+            }
+
+            $timeslotId = $app['id_timeslot'];
+
+            $sqlUpdateApp = "UPDATE appointments SET status = 'cancelled' WHERE id = ?";
+            $stmtUpdateApp = $this->pdo->prepare($sqlUpdateApp);
+            $stmtUpdateApp->execute([$appointmentId]);
+
+            $sqlReleaseSlot = "UPDATE timeslots SET is_available = 1 WHERE id = ?";
+            $stmtRelease = $this->pdo->prepare($sqlReleaseSlot);
+            $stmtRelease->execute([$timeslotId]);
+
+            $this->pdo->commit();
+            return true;
+
+        } catch (PDOException $e) {
+            $this->pdo->rollBack();
+            error_log("Error cancelling appointment: " . $e->getMessage());
+            return false;
+        }
+    }
 }

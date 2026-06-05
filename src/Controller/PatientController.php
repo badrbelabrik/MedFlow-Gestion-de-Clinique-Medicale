@@ -25,7 +25,7 @@ class PatientController
     public function dashboard(): array {
         $allSpecialities = $this->specialityRepo->getAllSpecialities();
 
-        $patientId = 5; // ID de test
+        $patientId = 5;  // NEED TO CHANGE !!!!!!!!!!!!!!!!!!!!
         $myAppointments = $this->appointmentRepo->getAppointmentsByPatientId($patientId);
 
         $firstname = isset($_GET['firstname']) ? trim($_GET['firstname']) : '';
@@ -52,15 +52,11 @@ class PatientController
             $timeSlots = $this->timeslotRepo->getAllAvailableTimeslots();
         }
         else if ($firstname !== '' || $lastname !== '') {
-            // 1. On récupère l'objet (ou null)
             $doctor = $this->doctorRepo->getDoctorByName($firstname, $lastname);
 
-            // 2. On vérifie s'il existe avant de lui demander son ID
             if ($doctor) {
                 $timeSlots = $this->timeslotRepo->getAvailableTimeslotsByDoctor($doctor->getId());
             } else {
-                // Le médecin n'existe pas, $timeSlots reste un tableau vide []
-                // Ta vue affichera automatiquement le message "Aucun créneau disponible"
                 $timeSlots = [];
             }
         }

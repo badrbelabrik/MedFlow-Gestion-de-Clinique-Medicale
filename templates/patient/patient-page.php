@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 spl_autoload_register(function ($class) {
     $classPath = str_replace('\\', DIRECTORY_SEPARATOR, $class);
     $paths = [
@@ -21,11 +23,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reserve'])) {
     $appointmentController = new AppointmentController();
     $appointmentController->book();
 }
-if (!isset($allSpecialities)) {
-    $patientController = new PatientController();
-    $data = $patientController->dashboard();
-    extract($data);
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'cancel') {
+    $appointmentController = new AppointmentController();
+    $appointmentController->cancel();
 }
+
+$controller = new PatientController();
+$data = $controller->dashboard();
+extract($data);
 
 $pageTitle = "Espace Patient — MedFlow";
 include_once __DIR__ . '/../layout/header.php';
@@ -179,7 +185,7 @@ include_once __DIR__ . '/../layout/header.php';
 
                             <div class="self-end sm:self-center">
                                 <?php if ($app->getStatus() === 'pending'): ?>
-                                    <a href="/patient/appointment/cancel?id=<?= $app->getId() ?>" class="text-slate-400 hover:text-rose-600 text-xs font-bold px-4 py-2 rounded-xl hover:bg-rose-50 transition border border-transparent hover:border-rose-100">
+                                    <a href="patient-page.php?action=cancel&id=<?= $app->getId() ?>" class="text-slate-400 hover:text-rose-600 text-xs font-bold px-4 py-2 rounded-xl hover:bg-rose-50 transition border border-transparent hover:border-rose-100">
                                         Annuler la demande
                                     </a>
                                 <?php elseif ($app->getStatus() === 'terminate'): ?>
