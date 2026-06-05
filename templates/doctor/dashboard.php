@@ -85,7 +85,7 @@ $rendez_vous_liste = $controller->afficherDashboard();
                         </div>
                     <?php else: ?>
                         <?php foreach ($rendez_vous_liste as $rdv): 
-                            $isConfirme = (strtolower($rdv['statut']) === 'confirme');
+                            $isConfirme = (strtolower($rdv['statut']) === 'confirmed');
                         ?>
                             <div class="p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4 hover:bg-slate-50/60 transition">
                                 

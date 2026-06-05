@@ -91,3 +91,14 @@ WHERE id_doctor=2;
 SELECT users.firstname , users.lastname , appointments.status  from appointments 
 join users on appointments.id_patient=users.id
 WHERE id_doctor=2;
+INSERT INTO timeslots (start_time, end_time, is_available, id_doctor) VALUES
+('2026-06-15 09:00:00', '2026-06-15 09:30:00', false, 2), -- Ghadi n-rbtouh b rdv Confirmed
+('2026-06-15 10:00:00', '2026-06-15 10:30:00', false, 2), -- Ghadi n-rbtouh b rdv Pending
+('2026-06-15 11:00:00', '2026-06-15 11:30:00', false, 2), -- Ghadi n-rbtouh b rdv Terminate (Clôturée)
+('2026-06-15 15:00:00', '2026-06-15 15:30:00', true, 2);  -- Hada ba9i khawi (Disponible)
+INSERT INTO appointments (id_patient, id_doctor, status, id_timeslot) VALUES
+(4, 2, 'pending', 5),
+(5, 2, 'confirmed', 4),
+(4, 2, 'terminate', 6);
+INSERT INTO prescriptions (description, id_appointment) VALUES
+('Amoxicilline 1g - 2 fois par jour pendant 7 jours. Doliprane 1g si douleur.', 4);

@@ -116,11 +116,11 @@ $historique_liste = $controller->afficherHistorique();
                                             📝 Rédiger une ordonnance
                                         </a>
 
-                                    <?php elseif ($statut === 'termine'): ?>
+                                    <?php elseif ($statut === 'terminate'): ?>
                                         <span class="px-3 py-1 text-xs font-bold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">
                                             ● Consultation Clôturée
                                         </span>
-                                        <a href="details_Ord.php?id_rdv=<?= $rdv['id'] ?>" 
+                                        <a href="details_ordo.php?id_rdv=<?= $rdv['id'] ?>" 
                                            class="px-3 py-1 text-xs font-bold rounded-full bg-clinicGreen/10 text-clinicGreen border border-clinicGreen/30 hover:bg-clinicGreen hover:text-white transition">
                                             Voir L'ordonnance
                                         </a>
