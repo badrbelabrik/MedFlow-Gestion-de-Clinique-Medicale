@@ -1,6 +1,6 @@
 <?php
 
-namespace Config;
+namespace config;
 
 use PDO;
 use PDOException;
@@ -22,7 +22,7 @@ class Database
 
             $env = parse_ini_file($envPath);
             // read .env
-            $env = parse_ini_file(".env");
+            $env = parse_ini_file(__DIR__ . '/../.env');
 
             $host = $env['DB_HOST'];
             $dbname = $env['DB_NAME'];

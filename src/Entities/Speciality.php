@@ -1,5 +1,5 @@
 <?php
-
+namespace Entities;
 class Speciality
 {
     private ?int $id;

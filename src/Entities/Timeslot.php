@@ -1,5 +1,5 @@
 <?php
-
+namespace Entities;
 class Timeslot
 {
     private ?int $id;

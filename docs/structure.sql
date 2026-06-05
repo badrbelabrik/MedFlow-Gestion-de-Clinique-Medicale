@@ -23,9 +23,6 @@ CREATE TABLE doctors(
     is_active BOOL DEFAULT true,
     FOREIGN KEY (id_user) REFERENCES users(id),
     FOREIGN KEY (id_speciality) REFERENCES specialities(id)
-    role ENUM('patient','doctor','admin'),
-    id_speciality INT,
-    FOREIGN KEY (id_speciality) REFERENCES specialities(id) ON DELETE CASCADE
 );
 
 CREATE TABLE timeslots(
@@ -34,14 +31,14 @@ CREATE TABLE timeslots(
     end_time TIMESTAMP NOT NULL,
     is_available BOOL DEFAULT true,
     id_doctor INT NOT NULL,
-    FOREIGN KEY (id_doctor) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (id_doctor) REFERENCES doctors(id) ON DELETE CASCADE
 );
 
 CREATE TABLE appointments(
     id INT PRIMARY KEY AUTO_INCREMENT,
     id_patient INT,
     id_doctor INT,
-    status ENUM('pending','confirmed','cancelled','terminate'),
+    status ENUM('pending','confirmed','cancelled','terminate') DEFAULT 'pending',
     id_timeslot INT,
     FOREIGN KEY (id_patient) REFERENCES users(id) ON DELETE SET NULL,
     FOREIGN KEY (id_doctor) REFERENCES users(id) ON DELETE SET NULL,
