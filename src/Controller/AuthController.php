@@ -41,9 +41,9 @@ class AuthController
                 if ($_SESSION['user_role'] === 'patient') {
                     header('Location: ../templates/patient/patient-page.php');
                 } else if($_SESSION['user_role'] === 'doctor'){
-                    header('Location: ../templates/doctor/doctor-page.php');
+                    header('Location: ../templates/doctor/dashboard.php');
                 } else if($_SESSION['user_role'] === 'admin'){
-                    header('Location: ../View/admin/dashboard.php');
+                    header('Location: ../src/View/admin/dashboard.php');
                 }
                 exit();
 

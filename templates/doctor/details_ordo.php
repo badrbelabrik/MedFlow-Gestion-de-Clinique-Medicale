@@ -3,7 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'doctor') {
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'doctor') {
     header('Location: ../auth/login.php');
     exit();
 }
@@ -30,6 +30,9 @@ if ($id_rdv > 0) {
     $stmt->execute([$id_rdv]);
     $ordonnance = $stmt->fetch(PDO::FETCH_ASSOC);
 }
+require_once __DIR__ . '/../../config/bootstrap.php';
+
+Middleware\AuthMiddleware::checkRoles(['doctor']);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -66,17 +69,49 @@ if ($id_rdv > 0) {
 <body class="bg-clinicBg text-slate-600 min-h-screen antialiased flex flex-col">
 
     <!-- HEADER (no-print) -->
-    <header class="w-full bg-white border-b border-slate-100 h-20 sticky top-0 z-50 no-print">
-        <div class="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
+    <header class="w-full bg-white border-b border-slate-100 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+
             <div class="flex items-center gap-3">
                 <div class="h-10 w-10 rounded-xl bg-clinicBlack flex items-center justify-center text-white font-extrabold text-lg">M</div>
-                <span class="text-xl font-bold text-clinicBlack">Med<span class="text-clinicGreen">Flow</span></span>
+                <span class="text-xl font-bold tracking-tight text-clinicBlack">Med<span class="text-clinicGreen">Flow</span></span>
             </div>
+
             <nav class="hidden md:flex items-center gap-1">
-                <a href="dashboard.php" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-slate-400 hover:text-clinicBlack text-sm font-semibold transition">Dashboard</a>
-                <a href="RendezVous.php" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-slate-400 hover:text-clinicBlack text-sm font-semibold transition">Rendez-vous</a>
+                <a href="dashboard.php" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-clinicGreen/10 text-clinicGreen font-bold text-sm transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z"></path></svg>
+                    Dashboard
+                </a>
+                <a href="disponibilite.php" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-slate-400 hover:bg-slate-50 hover:text-clinicBlack text-sm font-semibold transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                    Disponibilités
+                </a>
+                <a href="RendezVous.php" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-slate-400 hover:bg-slate-50 hover:text-clinicBlack text-sm font-semibold transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    Rendez-vous
+                </a>
             </nav>
-            <div class="text-xs font-bold text-clinicBlack">Dr. <?= htmlspecialchars($_SESSION['nom'] ?? 'Médecin') ?></div>
+
+            <div class="flex items-center gap-4">
+
+                <div class="flex items-center gap-3 bg-slate-50 px-4 py-2 rounded-2xl border border-slate-100/80 max-w-[220px]">
+                    <div class="h-8 w-8 rounded-lg bg-clinicBlack text-white flex items-center justify-center font-bold text-xs shrink-0">Dr</div>
+                    <div class="truncate">
+                        <p class="text-[10px] text-slate-400 font-medium leading-none">Médecin</p>
+                        <p class="text-xs font-bold text-clinicBlack truncate mt-0.5">Dr. <?= htmlspecialchars($_SESSION['user_firstname'] ?? 'Médecin') ?></p>
+                    </div>
+                </div>
+
+                <form action="/MedFlow-Gestion-de-Clinique-Medicale/public/index.php?action=logout" method="POST" class="inline m-0 p-0">
+                    <button type="submit" class="text-slate-400 hover:text-rose-600 p-2.5 rounded-xl hover:bg-rose-50 transition border border-transparent hover:border-rose-100 flex items-center justify-center" title="Déconnexion">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l4-4m-4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 01-3-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                    </button>
+                </form>
+
+            </div>
+
         </div>
     </header>
 

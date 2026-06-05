@@ -1,6 +1,6 @@
 # Environment variables
 .env
-
+seed.php
 # IDE (JetBrains / PHPStorm / IntelliJ)
 .idea/
 .vscode/

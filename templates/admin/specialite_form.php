@@ -2,6 +2,11 @@
 $isEdit = isset($specialite);
 $titre = $isEdit ? 'Modifier la spécialité' : 'Ajouter une spécialité';
 $action = $isEdit ? '?action=specialite_update' : '?action=specialite_store';
+
+
+require_once __DIR__ . '/../../config/bootstrap.php';
+
+Middleware\AuthMiddleware::checkRoles(['admin']);
 ?>
 <!DOCTYPE html>
 <html lang="fr">

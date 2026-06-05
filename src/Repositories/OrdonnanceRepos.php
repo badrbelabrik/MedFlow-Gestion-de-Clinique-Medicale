@@ -1,9 +1,10 @@
 <?php
+namespace Repositories;
 require_once __DIR__ . '/../../config/database.php';
 
 use Config\Database;
 
-class OrdonnanceRepository {
+class OrdonnanceRepos {
 
     public function sauvegarder($description, $id_rdv) {
         $pdo = Database::getConnection();

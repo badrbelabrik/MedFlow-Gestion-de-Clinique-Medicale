@@ -1,17 +1,22 @@
 <?php
+namespace Controller;
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
 require_once __DIR__ . '/../../src/Repositories/RendezVousRepository.php';
+require_once __DIR__ . '/../../src/Repositories/DoctorRepository.php';
 require_once __DIR__ . '/../../config/database.php';
 
 use Config\Database;
+use Exception;
+use RendezVousRepository;
+use Repositories\DoctorRepository;
 
 class MedecinController {
 
     public function afficherDashboard() {
-        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'doctor') {
+        if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'doctor') {
             header('Location: ../../templates/auth/login.php');
             exit();
         }
@@ -20,7 +25,7 @@ class MedecinController {
     }
 
     public function afficherHistorique() {
-        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'doctor') {
+        if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'doctor') {
             header('Location: ../../templates/auth/login.php');
             exit();
         }
@@ -54,12 +59,13 @@ class MedecinController {
         exit();
     }
     public function ajouterTimeslot() {
+        $doctorRepo = new DoctorRepository();
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $id_doctor = $_SESSION['user_id'] ?? null;
+            $id_doctor = $doctorRepo->getDoctorByUserId($_SESSION['user_id'])['doctor_id'];
             $date_slot = $_POST['date_slot'] ?? '';
             $heure_debut = $_POST['heure_debut'] ?? '';
             $heure_fin = $_POST['heure_fin'] ?? '';
@@ -75,7 +81,7 @@ class MedecinController {
                 $pdo = Database::getConnection();
                 
 
-                $sql = "INSERT INTO timeslots (start_time, end_time, id_doctor, status) VALUES (?, ?, ?, 'disponible')";
+                $sql = "INSERT INTO timeslots (start_time, end_time, id_doctor) VALUES (?, ?, ?)";
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([$start_time, $end_time, $id_doctor]);
 

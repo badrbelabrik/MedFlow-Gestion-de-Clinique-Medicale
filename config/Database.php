@@ -1,10 +1,6 @@
 <?php
 namespace config;
 
-use PDO;
-use PDOException;
-
-namespace config;
 
 use PDO;
 use PDOException;
@@ -17,7 +13,7 @@ class Database
     {
         if(self::$pdo === null){
 
-            // FIX: Use __DIR__ to go exactly one level up from the config folder to find .env
+
             $envPath = __DIR__ . '/../.env';
             
             if (!file_exists($envPath)) {
@@ -25,7 +21,7 @@ class Database
             }
 
             $env = parse_ini_file($envPath);
-            // read .env
+
             $env = parse_ini_file(__DIR__ . '/../.env');
 
             $host = $env['DB_HOST'];
@@ -45,9 +41,6 @@ class Database
                     PDO::ATTR_ERRMODE,
                     PDO::ERRMODE_EXCEPTION
                 );
-                
-
-            }catch(PDOException $e){
 
             }catch(PDOException $e){
 

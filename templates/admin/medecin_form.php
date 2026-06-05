@@ -2,6 +2,9 @@
 $isEdit = isset($medecin);
 $titre = $isEdit ? 'Modifier le médecin' : 'Ajouter un médecin';
 $action = $isEdit ? '?action=medecin_update' : '?action=medecin_store';
+require_once __DIR__ . '/../../config/bootstrap.php';
+
+Middleware\AuthMiddleware::checkRoles(['admin']);
 ?>
 <!DOCTYPE html>
 <html lang="fr">

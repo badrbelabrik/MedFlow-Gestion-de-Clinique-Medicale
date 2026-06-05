@@ -19,9 +19,9 @@ spl_autoload_register(function ($class) {
 use Controller\PatientController;
 use Controller\AppointmentController;
 use Helpers\DateHelper;
-use Middleware\AuthMiddleware;
+require_once __DIR__ . '/../../config/bootstrap.php';
 
-AuthMiddleware::checkRoles(['patient']);
+Middleware\AuthMiddleware::checkRoles(['patient']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reserve'])) {
     $appointmentController = new AppointmentController();

@@ -18,17 +18,16 @@ spl_autoload_register(function ($class) {
 use Controller\AuthController;
 
 $authController = new AuthController();
-$result = null; // ✨ Initialisation à null pour éviter les notices PHP
+$result = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $result = $authController->login(); // ✨ On stocke l'erreur retournée dans $result !
+    $result = $authController->login();
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'logout') {
     $authController->logout();
 }
 
-// Interception classique du formulaire de Login
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_GET['action'])) {
     $result = $authController->login();
 }

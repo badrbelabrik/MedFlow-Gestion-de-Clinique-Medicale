@@ -1,11 +1,17 @@
 <?php
 
+use Controller\AdminController;
+
 require_once __DIR__ . '/../../Controller/AdminController.php';
 
 $admin = new AdminController();
 $stats = $admin->getStats();
 $doctors = $admin->getDoctors();
 $specialities = $admin->getSpecialities();
+
+require_once __DIR__ . '/../../../config/bootstrap.php';
+
+Middleware\AuthMiddleware::checkRoles(['admin']);
 
 ?>
 <div class="admin-dashboard">

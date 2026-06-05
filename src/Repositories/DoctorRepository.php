@@ -115,4 +115,22 @@ class DoctorRepository
             return [];
         }
     }
+
+    public function getDoctorByUserId(int $userId): ?array
+    {
+        $query = "SELECT d.id AS doctor_id, d.id_user, d.id_speciality, d.is_active, 
+                         s.name AS speciality_name,
+                         u.firstname, u.lastname, u.email
+                  FROM doctors d
+                  JOIN users u ON d.id_user = u.id
+                  JOIN specialities s ON d.id_speciality = s.id
+                  WHERE d.id_user = :id_user LIMIT 1";
+
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute(['id_user' => $userId]);
+
+        $doctor = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $doctor ?: null;
+    }
 }
