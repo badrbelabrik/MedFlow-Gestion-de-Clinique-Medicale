@@ -14,7 +14,7 @@ use Repositories\PrescriptionRepository;
 header('Content-Type: application/json; charset=utf-8');
 
 $appointmentId = isset($_GET['appointment_id']) ? (int)$_GET['appointment_id'] : 0;
-$patientId = 5; // NEED TO CHANGE !!!!!!!!!!!!!
+$patientId = $_SESSION['user_id'];
 
 if ($appointmentId > 0) {
     $repo = new PrescriptionRepository();

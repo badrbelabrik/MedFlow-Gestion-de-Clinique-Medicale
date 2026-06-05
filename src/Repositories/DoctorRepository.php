@@ -2,7 +2,7 @@
 
 namespace Repositories;
 
-use Config\Database;
+use config\Database;
 use PDO;
 use Entities\Doctor;
 use PDOException;

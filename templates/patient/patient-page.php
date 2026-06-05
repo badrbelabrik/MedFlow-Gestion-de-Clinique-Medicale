@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 spl_autoload_register(function ($class) {
     $classPath = str_replace('\\', DIRECTORY_SEPARATOR, $class);
@@ -15,9 +14,14 @@ spl_autoload_register(function ($class) {
     }
 });
 
+
+
 use Controller\PatientController;
 use Controller\AppointmentController;
 use Helpers\DateHelper;
+use Middleware\AuthMiddleware;
+
+AuthMiddleware::checkRoles(['patient']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reserve'])) {
     $appointmentController = new AppointmentController();
@@ -29,6 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     $appointmentController->cancel();
 }
 
+
 $controller = new PatientController();
 $data = $controller->dashboard();
 extract($data);
@@ -36,7 +41,6 @@ extract($data);
 $pageTitle = "Espace Patient — MedFlow";
 include_once __DIR__ . '/../layout/header.php';
 ?>
-
     <main class="flex-grow max-w-4xl w-full mx-auto px-4 sm:px-6 py-10 space-y-12">
 
         <section class="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-sm space-y-8">

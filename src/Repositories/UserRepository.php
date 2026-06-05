@@ -2,11 +2,12 @@
 
 namespace Repositories;
 
-use Config\Database;
-use Doctor;
+use config\Database;
+use Entities\Doctor;
+use Entities\User;
 use PDO;
 use PDOException;
-use User;
+
 
 class UserRepository
 {
@@ -32,6 +33,36 @@ class UserRepository
                 );
         }catch(PDOException $e){
             echo "Error :".$e->getMessage();
+            return null;
+        }
+    }
+
+    public function verifyLogin($email,$password):?User
+    {
+        try{
+            $sql = "SELECT * FROM users WHERE email = ?";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$email]);
+            $userData = $stmt->fetch();
+
+            if(!$userData){
+                return null;
+            }
+
+            if(password_verify($password,$userData['password'])){
+                return new User(
+                    $userData['firstname'],
+                    $userData['lastname'],
+                    $userData['email'],
+                    $userData['password'],
+                    $userData['phone'],
+                    $userData['role'],
+                    $userData['id']
+                );
+            }
+            return null;
+        }catch(PDOException $e){
+            echo "Error: ".$e->getMessage();
             return null;
         }
     }

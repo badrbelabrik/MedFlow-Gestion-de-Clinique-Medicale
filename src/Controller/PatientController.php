@@ -25,7 +25,7 @@ class PatientController
     public function dashboard(): array {
         $allSpecialities = $this->specialityRepo->getAllSpecialities();
 
-        $patientId = 5;  // NEED TO CHANGE !!!!!!!!!!!!!!!!!!!!
+        $patientId = $_SESSION['user_id'];
         $myAppointments = $this->appointmentRepo->getAppointmentsByPatientId($patientId);
 
         $firstname = isset($_GET['firstname']) ? trim($_GET['firstname']) : '';

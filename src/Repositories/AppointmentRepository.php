@@ -3,7 +3,7 @@
 namespace Repositories;
 
 use Entities\Appointment;
-use Config\Database;
+use config\Database;
 use Entities\Doctor;
 use PDO;
 use PDOException;

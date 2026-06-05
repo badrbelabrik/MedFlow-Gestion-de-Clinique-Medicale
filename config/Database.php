@@ -1,6 +1,6 @@
 <?php
 
-namespace Config;
+namespace config;
 
 use PDO;
 use PDOException;
@@ -14,12 +14,12 @@ class Database
         if(self::$pdo === null){
 
             // read .env
-            $config = parse_ini_file(__DIR__ . '/../.env');
+            $env = parse_ini_file(__DIR__ . '/../.env');
 
-            $host = $config['DB_HOST'];
-            $dbname = $config['DB_NAME'];
-            $user = $config['DB_USER'];
-            $password = $config['DB_PASSWORD'];
+            $host = $env['DB_HOST'];
+            $dbname = $env['DB_NAME'];
+            $user = $env['DB_USER'];
+            $password = $env['DB_PASSWORD'];
 
             try{
 

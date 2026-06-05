@@ -24,7 +24,7 @@ class AppointmentController
         $doctorId = isset($_POST['id_doctor']) ? (int)$_POST['id_doctor'] : 0;
         $timeslotId = isset($_POST['id_timeslot']) ? (int)$_POST['id_timeslot'] : 0;
 
-        $patientId = 5;  // NEED TO CHANGE !!!!!!!!!!!!!!!!!!!!
+        $patientId = $_SESSION['user_id'];
 
         if ($doctorId > 0 && $timeslotId > 0) {
             $success = $this->appointmentRepo->bookAppointment($patientId, $doctorId, $timeslotId);
@@ -45,7 +45,7 @@ class AppointmentController
 
     public function cancel(): void {
         $appointmentId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-        $patientId = 5;  // NEED TO CHANGE !!!!!!!!!!!!!!!!!!!!
+        $patientId = $_SESSION['user_id'];
 
         if ($appointmentId > 0) {
             $success = $this->appointmentRepo->cancelAppointment($appointmentId, $patientId);
