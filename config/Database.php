@@ -13,8 +13,14 @@ class Database
     {
         if(self::$pdo === null){
 
-            // read .env
-            $env = parse_ini_file("../.env");
+            // FIX: Use __DIR__ to go exactly one level up from the config folder to find .env
+            $envPath = __DIR__ . '/../.env';
+            
+            if (!file_exists($envPath)) {
+                die("Connection failed: The .env file was not found at " . $envPath);
+            }
+
+            $env = parse_ini_file($envPath);
 
             $host = $env['DB_HOST'];
             $dbname = $env['DB_NAME'];
@@ -22,7 +28,6 @@ class Database
             $password = $env['DB_PASSWORD'];
 
             try{
-
                 self::$pdo = new PDO(
                     "mysql:host=$host;dbname=$dbname",
                     $user,
@@ -33,9 +38,9 @@ class Database
                     PDO::ATTR_ERRMODE,
                     PDO::ERRMODE_EXCEPTION
                 );
+                echo "Connected successfully to the database.";
 
             }catch(PDOException $e){
-
                 die("Connection failed : " . $e->getMessage());
             }
         }
