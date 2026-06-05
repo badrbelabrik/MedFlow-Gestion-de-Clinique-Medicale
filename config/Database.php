@@ -1,4 +1,8 @@
 <?php
+namespace config;
+
+use PDO;
+use PDOException;
 
 namespace config;
 
