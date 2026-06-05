@@ -6,7 +6,6 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/../../src/Repositories/RendezVousRepository.php';
 require_once __DIR__ . '/../../config/database.php';
 
-// Importi l-Database namespace bash nkhdmou b getConnection()
 use Config\Database;
 
 class MedecinController {
@@ -33,17 +32,15 @@ class MedecinController {
         $repo = new RendezVousRepository();
 
         if ($action === 'confirmer') {
-            // FIX 1: Rednaha 'confirmed' b l-Anglais
+
             $repo->modifierStatut($id_rdv, 'confirmed');
         } 
         elseif ($action === 'annuler') {
-            // FIX 2: Rednaha 'cancelled' b l-Anglais
+
             $repo->modifierStatut($id_rdv, 'cancelled');
 
-            // FIX 3: n7ni l-global o njibo l-connection s7i7a
             $pdo = Database::getConnection();
 
-            // FIX 4: Query m9adda b l-Anglais 100% 3la ksaft tables dyalk
             $sql = "UPDATE timeslots t
                     JOIN appointments a ON a.id_timeslot = t.id 
                     SET t.is_available = 1 
@@ -77,8 +74,7 @@ class MedecinController {
             try {
                 $pdo = Database::getConnection();
                 
-                // Query configuration 3la 7sab smiyt l-columns f table timeslots
-                // Hna ftrdna smiyathom: start_time, end_time, id_doctor, status (disponible par défaut)
+
                 $sql = "INSERT INTO timeslots (start_time, end_time, id_doctor, status) VALUES (?, ?, ?, 'disponible')";
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([$start_time, $end_time, $id_doctor]);
