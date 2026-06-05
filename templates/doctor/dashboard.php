@@ -55,16 +55,20 @@ $rendez_vous_liste = $controller->afficherDashboard();
             </div>
             
             <!-- Navigation -->
-            <nav class="hidden md:flex items-center gap-1">
-                <a href="dashboard.php" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-clinicGreen/10 text-clinicGreen font-bold text-sm transition">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z"></path></svg>
-                    Dashboard
-                </a>
-                <a href="RendezVous.php" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-slate-400 hover:bg-slate-50 hover:text-clinicBlack text-sm font-semibold transition">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                    Rendez-vous
-                </a>
-            </nav>
+<nav class="hidden md:flex items-center gap-1">
+    <a href="dashboard.php" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-clinicGreen/10 text-clinicGreen font-bold text-sm transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z"></path></svg>
+        Dashboard
+    </a>
+    <a href="disponibilite.php" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-slate-400 hover:bg-slate-50 hover:text-clinicBlack text-sm font-semibold transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+        Disponibilités
+    </a>
+    <a href="RendezVous.php" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-slate-400 hover:bg-slate-50 hover:text-clinicBlack text-sm font-semibold transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+        Rendez-vous
+    </a>
+</nav>
 
             <!-- User Info -->
             <div class="flex items-center gap-3 bg-slate-50 px-4 py-2 rounded-2xl border border-slate-100/80 max-w-[220px]">

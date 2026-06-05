@@ -56,6 +56,41 @@ class MedecinController {
         header('Location: ../../templates/doctor/dashboard.php');
         exit();
     }
+    public function ajouterTimeslot() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id_doctor = $_SESSION['user_id'] ?? null;
+            $date_slot = $_POST['date_slot'] ?? '';
+            $heure_debut = $_POST['heure_debut'] ?? '';
+            $heure_fin = $_POST['heure_fin'] ?? '';
+
+            if (!$id_doctor || empty($date_slot) || empty($heure_debut) || empty($heure_fin)) {
+                return "Tous les champs sont obligatoires.";
+            }
+
+            $start_time = $date_slot . ' ' . $heure_debut . ':00';
+            $end_time = $date_slot . ' ' . $heure_fin . ':00';
+
+            try {
+                $pdo = Database::getConnection();
+                
+                // Query configuration 3la 7sab smiyt l-columns f table timeslots
+                // Hna ftrdna smiyathom: start_time, end_time, id_doctor, status (disponible par défaut)
+                $sql = "INSERT INTO timeslots (start_time, end_time, id_doctor, status) VALUES (?, ?, ?, 'disponible')";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([$start_time, $end_time, $id_doctor]);
+
+                header('Location: disponibilite.php?success=1');
+                exit();
+            } catch (Exception $e) {
+                return "Erreur lors de l'ajout : " . $e->getMessage();
+            }
+        }
+        return null;
+    }
 }
 
 $controller = new MedecinController();

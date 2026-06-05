@@ -1,0 +1,139 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'doctor') {
+    header('Location: ../auth/login.php');
+    exit();
+}
+
+require_once __DIR__ . '/../../src/Controller/MedecinController.php';
+$controller = new MedecinController();
+$error_message = $controller->ajouterTimeslot();
+
+$is_success = isset($_GET['success']);
+?>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedFlow | Définir Disponibilités</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        clinicBlack: '#0f172a',
+                        clinicGreen: '#10b981',
+                        clinicGreenHover: '#059669',
+                        clinicBg: '#f8fafc',
+                    },
+                    boxShadow: {
+                        'premium': '0 20px 40px -15px rgba(15, 23, 42, 0.05)',
+                        'glow-green': '0 4px 25px -2px rgba(16, 185, 129, 0.2)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-clinicBg text-slate-600 min-h-screen antialiased flex flex-col">
+
+    <!-- GLOBAL HEADER -->
+    <header class="w-full bg-white border-b border-slate-100 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+            
+            <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-xl bg-clinicBlack flex items-center justify-center text-white font-extrabold text-lg">M</div>
+                <span class="text-xl font-bold tracking-tight text-clinicBlack">Med<span class="text-clinicGreen">Flow</span></span>
+            </div>
+            
+            <nav class="hidden md:flex items-center gap-1">
+                <a href="dashboard.php" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-slate-400 hover:bg-slate-50 hover:text-clinicBlack text-sm font-semibold transition">
+                    Dashboard
+                </a>
+                <a href="disponibilite.php" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-clinicGreen/10 text-clinicGreen font-bold text-sm transition">
+                    Disponibilités
+                </a>
+                <a href="RendezVous.php" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-slate-400 hover:bg-slate-50 hover:text-clinicBlack text-sm font-semibold transition">
+                    Rendez-vous
+                </a>
+            </nav>
+
+            <div class="flex items-center gap-3 bg-slate-50 px-4 py-2 rounded-2xl max-w-[220px]">
+                <div class="h-8 w-8 rounded-lg bg-clinicBlack text-white flex items-center justify-center font-bold text-xs">Dr</div>
+                <div class="truncate">
+                    <p class="text-xs font-bold text-clinicBlack truncate">Dr. <?= htmlspecialchars($_SESSION['nom'] ?? 'Médecin') ?></p>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- FORM CONTAINER -->
+    <main class="flex-1 flex items-center justify-center p-4 sm:p-8">
+        <div class="w-full max-w-xl bg-white border border-slate-100 rounded-3xl p-6 md:p-10 shadow-premium">
+            
+            <div class="mb-8 border-b border-slate-50 pb-5">
+                <span class="text-[10px] font-bold text-clinicGreen uppercase tracking-widest bg-clinicGreen/10 px-3 py-1.5 rounded-xl border border-clinicGreen/20">Planning</span>
+                <h1 class="text-2xl font-extrabold text-clinicBlack tracking-tight mt-3">Ouvrir une Plage Horaire</h1>
+                <p class="text-xs text-slate-400 mt-1 font-medium">Ajoutez un créneau de disponibilité pour vos futurs rendez-vous.</p>
+            </div>
+
+            <!-- Messages d'état -->
+            <?php if ($is_success): ?>
+                <div class="bg-emerald-50 text-emerald-600 text-xs p-4 rounded-xl mb-6 text-center font-bold border border-emerald-100 flex items-center justify-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span> Créneau ajouté sur la table Timeslots avec succès !
+                </div>
+            <?php endif; ?>
+
+            <?php if (!empty($error_message)): ?>
+                <div class="bg-rose-50 text-rose-600 text-xs p-4 rounded-xl mb-6 text-center font-semibold border border-rose-100">
+                    <?= htmlspecialchars($error_message) ?>
+                </div>
+            <?php endif; ?>
+
+            <form action="" method="POST" class="space-y-6">
+                
+                <!-- Date -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Date du créneau</label>
+                    <input type="date" name="date_slot" required min="<?= date('Y-m-d') ?>"
+                        class="w-full bg-slate-50/70 border-2 border-slate-100 rounded-xl p-3.5 text-clinicBlack font-medium text-sm focus:outline-none focus:border-clinicGreen focus:bg-white transition duration-200">
+                </div>
+
+                <!-- Hours Grid -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Heure Début</label>
+                        <input type="time" name="heure_debut" required
+                            class="w-full bg-slate-50/70 border-2 border-slate-100 rounded-xl p-3.5 text-clinicBlack font-mono text-sm focus:outline-none focus:border-clinicGreen focus:bg-white transition duration-200">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Heure Fin</label>
+                        <input type="time" name="heure_fin" required
+                            class="w-full bg-slate-50/70 border-2 border-slate-100 rounded-xl p-3.5 text-clinicBlack font-mono text-sm focus:outline-none focus:border-clinicGreen focus:bg-white transition duration-200">
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="pt-4">
+                    <button type="submit" 
+                        class="w-full px-6 py-4 bg-clinicGreen hover:bg-clinicGreenHover text-white font-extrabold text-xs rounded-xl shadow-glow-green transition uppercase tracking-wider">
+                        Rendre Disponible ce Créneau
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+</body>
+</html>
