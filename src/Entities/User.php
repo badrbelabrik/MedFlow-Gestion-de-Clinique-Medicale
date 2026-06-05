@@ -1,4 +1,5 @@
 <?php
+namespace Entities;
 
 class User {
     private int $id;

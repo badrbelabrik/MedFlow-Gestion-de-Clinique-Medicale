@@ -1,12 +1,11 @@
 <?php
-
+namespace Repositories;
 require_once __DIR__ . "/../../config/database.php";
 require_once __DIR__ . "/../Entities/User.php";
 
 use config\Database;
-
-
-
+use PDO;
+use Entities\User;
 
 class UserRepository {
 
