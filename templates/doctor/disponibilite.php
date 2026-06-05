@@ -70,7 +70,7 @@ $is_success = isset($_GET['success']);
             <div class="flex items-center gap-3 bg-slate-50 px-4 py-2 rounded-2xl max-w-[220px]">
                 <div class="h-8 w-8 rounded-lg bg-clinicBlack text-white flex items-center justify-center font-bold text-xs">Dr</div>
                 <div class="truncate">
-                    <p class="text-xs font-bold text-clinicBlack truncate">Dr. <?= htmlspecialchars($_SESSION['nom'] ?? 'Médecin') ?></p>
+                    <p class="text-xs font-bold text-clinicBlack truncate">Dr. <?= htmlspecialchars($_SESSION['firstname'] ?? 'Médecin') ?></p>
                 </div>
             </div>
 

@@ -28,10 +28,10 @@ $rendez_vous_liste = $controller->afficherDashboard();
             theme: {
                 extend: {
                     colors: {
-                        clinicBlack: '#0f172a',    /* أسود داكن فخم */
-                        clinicGreen: '#10b981',    /* أخضر طبي حيوي */
+                        clinicBlack: '#0f172a',   
+                        clinicGreen: '#10b981',
                         clinicGreenHover: '#059669',
-                        clinicBg: '#f8fafc',       /* خلفية بيضاء ناصعة مريحة */
+                        clinicBg: '#f8fafc',       
                     },
                     boxShadow: {
                         'premium': '0 10px 30px -10px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.02)',
@@ -75,7 +75,7 @@ $rendez_vous_liste = $controller->afficherDashboard();
                 <div class="h-8 w-8 rounded-lg bg-clinicBlack text-white flex items-center justify-center font-bold text-xs shrink-0">Dr</div>
                 <div class="truncate">
                     <p class="text-[10px] text-slate-400 font-medium leading-none">Médecin</p>
-                    <p class="text-xs font-bold text-clinicBlack truncate mt-0.5">Dr. <?= htmlspecialchars($_SESSION['nom'] ?? 'Médecin') ?></p>
+                    <p class="text-xs font-bold text-clinicBlack truncate mt-0.5">Dr. <?= htmlspecialchars($_SESSION['firstname'] ?? 'Médecin') ?></p>
                 </div>
             </div>
 

@@ -8,7 +8,7 @@ class OrdonnanceRepository {
     public function sauvegarder($description, $id_rdv) {
         $pdo = Database::getConnection();
 
-        // Check ila rdv appointment 3ndek f database
+
         $check = $pdo->prepare("SELECT id FROM appointments WHERE id = ?");
         $check->execute([$id_rdv]);
         $existe = $check->fetch();
@@ -27,7 +27,7 @@ class OrdonnanceRepository {
             }
         }
 
-        // Table smيتها prescriptions f database dyalk
+  
         $sql = "INSERT INTO prescriptions (description, id_appointment) VALUES (:description, :id_appointment)";
         $stmt = $pdo->prepare($sql);
 

@@ -53,7 +53,7 @@ class RendezVousRepository
     {
         $pdo = Database::getConnection();
         
-        // table hia appointments o column hoa status
+
         $sql = "UPDATE appointments SET status = :statut WHERE id = :id";
         $stmt = $pdo->prepare($sql);
         $stmt->execute(['statut' => $nouveau_statut, 'id' => $id_rdv]);
